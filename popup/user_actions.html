@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="user_actions.css" />
+    </head>
+
+    <body>
+        <div id="popup-content">
+            <div id="title"></div>
+            <div id="reload_button" title="Reload page (changes to JS mods take effect)" class="hidden"></div>
+            
+            <div class="flex_container">
+                <div id="toggle_js_mods" title="Toggle user actions (js mods)" class="flex_item"></div>
+                <div id="toggle_dark_css" class="flex_item"></div>
+                <div id="toggle_dark_filters" class="flex_item"></div>
+                <div id="edit_user_script" title="Edit user script" class="flex_item"></div>
+                <div id="show_more" title="Show more" class="flex_item"></div>
+            </div>
+            
+        </div>
+        <div id="error-content" class="hidden">
+            Error: couldn't load the content script.
+        </div>
+        <script src="user_actions.js"></script>
+    </body>
+</html>

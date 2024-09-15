@@ -1,0 +1,39 @@
+{
+    "manifest_version": 2,
+    "name": "user-actions",
+    "version": "1.0",
+    "description": "Optionally enables right click, text selection, context menus, etc, without breaking sites. Modifies .addEventListener() or .preventDefault().",
+    "homepage_url": "https://a.b/cc",
+    "icons": {
+        "48": "icons/user-actions-48.png"
+    },
+    
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "a@b.cc",
+            "strict_min_version": "79.0"
+        }
+    },
+
+    "permissions": [
+        "activeTab", "storage", "contextMenus", "<all_urls>"
+    ],
+
+    "browser_action": {
+        "default_icon": "icons/user-actions-32.png",
+        "default_title": "user-actions",
+        "default_popup": "popup/user_actions.html"
+    },
+
+    "web_accessible_resources": ["injected_scripts/injected.js", "popup/icons/*.webp"],
+
+    "content_scripts": [{
+        "matches": ["*://*/*"],
+        "js": ["content_scripts/user_actions_content_script.js"],
+        "run_at" : "document_start"
+    }],
+
+    "background": {
+        "scripts": ["background_scripts/user_actions_background.js"]
+    }
+}
