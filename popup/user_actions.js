@@ -1,15 +1,5 @@
 console.info('Popup script runs...');
 
-function trim_url(url) {
-    let httpsIndex = url.indexOf("https://");
-	if (httpsIndex != -1)
-		url = url.substring(httpsIndex+8);
-	let slashIndex = url.indexOf("/");
-    if (slashIndex != -1)
-		url = url.substring(0, slashIndex);
-    return url;
-}
-
 /** Gets a single element from the css selector;
  *  If bool_enable_disable is true, add enabled and remove disabled 
  *  from the element's classList and vice versa.

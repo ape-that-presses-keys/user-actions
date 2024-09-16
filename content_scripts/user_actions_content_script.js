@@ -1,12 +1,14 @@
-(() => {
+// (() => {
 
 /**
  * Check and set a global guard variable.
  * If this content script is injected into the same page again,
  * it will do nothing next time.
  */
-if (window.hasRun === true)
-    return;
+if (window.hasRun === true) {
+    console.info('Blocked content script from running again...');
+    // return;
+} else {
 window.hasRun = true;
 
 console.info('Content script runs...');
@@ -136,4 +138,5 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 });
 
-})();
+}
+// })(window);

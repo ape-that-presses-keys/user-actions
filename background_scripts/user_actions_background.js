@@ -1,27 +1,11 @@
 console.info('Background script runs...');
 
-function trim_url(url) {
-    let httpsIndex = url.indexOf("https://");
-	if (httpsIndex != -1)
-		url = url.substring(httpsIndex+8);
-	let slashIndex = url.indexOf("/");
-    if (slashIndex != -1)
-		url = url.substring(0, slashIndex);
-    return url;
-}
-
 /**
  * On extension install:
  *  - Clear local storage
  *  - Set default settings
  */
 browser.runtime.onInstalled.addListener(async () => {
-    function setOkay () {
-        console.info("tabSettings set okay");
-    }
-    function setError (e) {
-        console.log(e);
-    }
     let tabSettings = {};
     tabSettings['default'] = {};
     tabSettings['default'].js_mods = true;
@@ -35,15 +19,23 @@ browser.runtime.onInstalled.addListener(async () => {
 
 async function get_tab_settings(message, sender, sendResponse) {
     let storage_item;
-    while (true) {
-        storage_item = await browser.storage.local.get("tabSettings");
-        if (Object.keys(storage_item).length == 0) {
-            // console.log("not set yet");
-            continue;
-        } else {
-            break;
-        }
-    }
+    storage_item = await browser.storage.local.get("tabSettings");
+    // console.log(storage_item, storage_item.length);
+    // const MAX_TRIES = 1000;
+    // for (let tries = 0; tries < MAX_TRIES; i++) {
+    //     if (tries == MAX_TRIES - 1) {
+    //         console.error("Couldn't get settings from storage.");
+    //         break;
+    //     }
+    //     storage_item = await browser.storage.local.get("tabSettings");
+    //     if (Object.keys(storage_item).length == 0) {
+    //         // got an empty object (.get before .set)
+    //         continue;
+    //     } else {
+    //         // got the settings item
+    //         break;
+    //     }
+    // }
     let settings = storage_item.tabSettings;
     let origin = trim_url(sender.origin);
     if (settings[origin] === undefined) {
@@ -63,8 +55,6 @@ async function save_user_script(message, sender, sendResponse) {
 }
 
 async function document_onload(message, sender, sendResponse) {
-    console.log("document_onload received");
-
     // Enable text selection (and change selection color which can be used to hide the selection)
     let text_selection_css = `
     body {user-select: auto;}

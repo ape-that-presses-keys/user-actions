@@ -28,12 +28,12 @@
     "web_accessible_resources": ["injected_scripts/injected.js", "popup/icons/*.webp"],
 
     "content_scripts": [{
-        "matches": ["*://*/*"],
+        "matches": ["http://*/*", "https://*/*"],
         "js": ["content_scripts/user_actions_content_script.js"],
         "run_at" : "document_start"
     }],
 
     "background": {
-        "scripts": ["background_scripts/user_actions_background.js"]
+        "scripts": ["common/common.js", "background_scripts/user_actions_background.js"]
     }
 }
