@@ -26,9 +26,10 @@ window.onload = () => {
  *  - clone them to the page so the injected script has access;
  *  - store a snapshot of them (todo)
  */
-runtime.sendMessage({type: "get_tab_settings"})
+browser.runtime.sendMessage({type: "get_tab_settings"})
     .then((settings) => {
-        window.wrappedJSObject.settings = cloneInto(settings, window, {cloneFunctions: true,});
+        // window.wrappedJSObject.settings = cloneInto(settings, window, {cloneFunctions: true,});
+        window.wrappedJSObject.settings = structuredClone(settings);
 
         // Page script (Injected script)
         // let page_script = document.createElement('script');

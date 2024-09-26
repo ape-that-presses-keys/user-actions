@@ -19,7 +19,7 @@
    * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
   "use strict";
 
-  if (!(globalThis.chrome && globalThis.browser.runtime && globalThis.browser.runtime.id)) {
+  if (!(globalThis.chrome && globalThis.chrome.runtime && globalThis.chrome.runtime.id)) {
     throw new Error("This script should only be loaded in a browser extension.");
   }
   if (!(globalThis.browser && globalThis.browser.runtime && globalThis.browser.runtime.id)) {
@@ -748,7 +748,7 @@
        * Creates and returns a function which, when called, will resolve or reject
        * the given promise based on how it is called:
        *
-       * - If, when called, `browser.runtime.lastError` contains a non-null object,
+       * - If, when called, `chrome.runtime.lastError` contains a non-null object,
        *   the promise is rejected with that value.
        * - If the function is called with exactly one argument, the promise is
        *   resolved to that value.
@@ -984,7 +984,7 @@
         // non-configurable. For this reason, we create an object with the
         // prototype set to `target` instead of using `target` directly.
         // Otherwise we cannot return a custom object for APIs that
-        // are declared read-only and non-configurable, such as `browser.devtools`.
+        // are declared read-only and non-configurable, such as `chrome.devtools`.
         //
         // The proxy handlers themselves will still use the original `target`
         // instead of the `proxyTarget`, so that the methods and properties are

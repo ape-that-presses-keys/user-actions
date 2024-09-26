@@ -5,7 +5,7 @@
     "description": "Optionally enables right click, text selection, context menus, etc, without breaking sites. Modifies .addEventListener() or .preventDefault().",
     "homepage_url": "https://a.b/cc",
     "icons": {
-        "48": "icons/user-actions-48.png"
+        "48": "/icons/user-actions-48.png"
     },
     
     "browser_specific_settings": {
@@ -20,20 +20,33 @@
     ],
 
     "browser_action": {
-        "default_icon": "icons/user-actions-32.png",
+        "default_icon": "/icons/user-actions-32.png",
         "default_title": "user-actions",
-        "default_popup": "popup/user_actions.html"
+        "default_popup": "/popup/user_actions.html"
     },
 
-    "web_accessible_resources": ["common_scripts/browser-polyfill.js", "injected_scripts/injected.js", "popup/icons/*.webp"],
+    "web_accessible_resources": [
+        "/common_scripts/browser-polyfill.js",
+        "/common_scripts/common.js",
+        "/injected_scripts/injected.js", 
+        "/popup/icons/*.webp"
+    ],
 
     "content_scripts": [{
         "matches": ["http://*/*", "https://*/*"],
-        "js": ["common_scripts/browser-polyfill.js", "content_scripts/user_actions_content_script.js"],
+        "js": [
+            "/common_scripts/browser-polyfill.js", 
+            "/common_scripts/common.js", 
+            "/content_scripts/user_actions_content_script.js"
+        ],
         "run_at" : "document_start"
     }],
 
     "background": {
-        "scripts": ["common_scripts/browser-polyfill.js", "background_scripts/user_actions_background.js"]
+        "scripts": [
+            "/common_scripts/browser-polyfill.js", 
+            "/common_scripts/common.js", 
+            "/background_scripts/user_actions_background.js"
+        ]
     }
 }
