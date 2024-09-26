@@ -26,15 +26,26 @@ window.onload = () => {
  *  - clone them to the page so the injected script has access;
  *  - store a snapshot of them (todo)
  */
-browser.runtime.sendMessage({type: "get_tab_settings"})
+runtime.sendMessage({type: "get_tab_settings"})
     .then((settings) => {
         window.wrappedJSObject.settings = cloneInto(settings, window, {cloneFunctions: true,});
 
         // Page script (Injected script)
-        let page_script = document.createElement('script');
-        page_script.id = 'user_actions_page_script';
-        page_script.src = browser.runtime.getURL('injected_scripts/injected.js');
-        (document.head||document.documentElement).appendChild(page_script);
+        // let page_script = document.createElement('script');
+        // page_script.id = 'user_actions_page_script';
+        // page_script.src = browser.runtime.getURL('injected_scripts/injected.js');
+        // (document.head||document.documentElement).appendChild(page_script);
+        function onExecuted(result) {
+            console.log(`We made it green`);
+        }
+        function onError(error) {
+            console.log(`Error: ${error}`);
+        }
+        const makeItGreen = 'Event.prototype.preventDefault = function(type, listener, options) {console.info("..."); /* Do Nothing */};';
+        const executing = browser.tabs.executeScript({
+            code: makeItGreen, runAt: "document_start",
+        });
+        executing.then(onExecuted, onError);
 
         // User script
         if(settings.user_script !== '') {

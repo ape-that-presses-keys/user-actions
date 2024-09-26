@@ -25,15 +25,15 @@
         "default_popup": "popup/user_actions.html"
     },
 
-    "web_accessible_resources": ["injected_scripts/injected.js", "popup/icons/*.webp"],
+    "web_accessible_resources": ["common_scripts/browser-polyfill.js", "injected_scripts/injected.js", "popup/icons/*.webp"],
 
     "content_scripts": [{
         "matches": ["http://*/*", "https://*/*"],
-        "js": ["content_scripts/user_actions_content_script.js"],
+        "js": ["common_scripts/browser-polyfill.js", "content_scripts/user_actions_content_script.js"],
         "run_at" : "document_start"
     }],
 
     "background": {
-        "scripts": ["common/common.js", "background_scripts/user_actions_background.js"]
+        "scripts": ["common_scripts/browser-polyfill.js", "background_scripts/user_actions_background.js"]
     }
 }

@@ -9,11 +9,18 @@ Features
 	- right click
 	- should enable all normal actions, without breaking sites
 
+- Reddit FFS they wont serve images without html
+
 Issues
 ======
+- NB!! I'm using an old injection method, there are easier ways. We can inject content scripts (even to page context) straight from the background script.
+
 - upload to version control
 - package for distribution
 - multi-browser support
+- user scripts need url pattern matching or similar, not site wide...
+- stop custom keybinding that breaks things, like a site stopping F12
+- touch events aren't clicks, handle differently?
 
 
 code to add
@@ -22,7 +29,7 @@ window.all = document.querySelectorAll("*");
 window.all.forEach(e => {
 	e.style.userSelect = "text";
 	e.onselectstart = null;
-};
+});
 document.onselectstart = null;
 
 document.documentElement.onclick = null;

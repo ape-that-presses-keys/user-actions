@@ -21,7 +21,7 @@ console.info(`Tab's settings:\r\n==============\r\n
  * The method is simple, we override prototypes, making them do nothing.
  */
 if (window.settings.js_mods) {
-    Event.prototype.preventDefault = function(type, listener, options) {/* Do Nothing */};
+    Event.prototype.preventDefault = function(type, listener, options) {/*console.info("...");*/ /* Do Nothing */};
     // Event.prototype.addEventListener = function(type, listener, options) {/* Do Nothing */};
 }
 
