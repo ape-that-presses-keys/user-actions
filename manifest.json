@@ -1,52 +1,66 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "user-actions",
-    "version": "1.0",
+    "version": "0.0.1",
     "description": "Optionally enables right click, text selection, context menus, etc, without breaking sites. Modifies .addEventListener() or .preventDefault().",
     "homepage_url": "https://a.b/cc",
     "icons": {
         "48": "/icons/user-actions-48.png"
     },
-    
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "a@b.cc",
-            "strict_min_version": "79.0"
-        }
-    },
-
     "permissions": [
-        "activeTab", "storage", "contextMenus", "<all_urls>"
+        "activeTab",
+        "scripting",
+        "storage",
+        "contextMenus"
     ],
-
-    "browser_action": {
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "content_security_policy": {
+        "extension_pages": "default-src 'self'"
+    },
+    "action": {
         "default_icon": "/icons/user-actions-32.png",
         "default_title": "user-actions",
         "default_popup": "/popup/user_actions.html"
     },
-
     "web_accessible_resources": [
-        "/common_scripts/browser-polyfill.js",
-        "/common_scripts/common.js",
-        "/injected_scripts/injected.js", 
-        "/popup/icons/*.webp"
+        {
+            "resources": [
+                "/injected_scripts/injected.js",
+                "/popup/icons/*.webp"
+            ],
+            "matches": []
+        }
     ],
-
-    "content_scripts": [{
-        "matches": ["http://*/*", "https://*/*"],
-        "js": [
-            "/common_scripts/browser-polyfill.js", 
-            "/common_scripts/common.js", 
-            "/content_scripts/user_actions_content_script.js"
-        ],
-        "run_at" : "document_start"
-    }],
-
+    "content_scripts": [
+        {
+            "matches": [
+                "file://*/*",
+                "http://*/*",
+                "https://*/*"
+            ],
+            "js": [
+                "/content_scripts/user_actions_content_script.js"
+            ],
+            "run_at": "document_start",
+            "world": "ISOLATED"
+        },
+        {
+            "matches": [
+                "file://*/*",
+                "http://*/*",
+                "https://*/*"
+            ],
+            "js": [
+                "/injected_scripts/injected.js"
+            ],
+            "run_at": "document_start",
+            "world": "MAIN"
+        }
+    ],
     "background": {
-        "scripts": [
-            "/common_scripts/browser-polyfill.js", 
-            "/common_scripts/common.js", 
-            "/background_scripts/user_actions_background.js"
-        ]
+        "service_worker": "/background_scripts/user_actions_background.mjs",
+        "type": "module"
     }
 }

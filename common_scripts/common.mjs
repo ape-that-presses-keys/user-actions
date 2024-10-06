@@ -7,3 +7,5 @@ function trim_url(url) {
     }
     return url;
 }
+
+export {trim_url};

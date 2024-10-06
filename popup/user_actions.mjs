@@ -1,5 +1,7 @@
 console.info('Popup script runs...');
 
+import { trim_url } from "/common_scripts/common.mjs";
+
 /** Gets a single element from the css selector;
  *  If bool_enable_disable is true, add enabled and remove disabled 
  *  from the element's classList and vice versa.
@@ -32,9 +34,9 @@ window.onload = function() {
     // add onclick for reload button
     document.querySelector("#reload_button").onclick = () => {reload_button_clicked();};
 
-    browser.storage.local.get("tabSettings")
+    chrome.storage.local.get("tabSettings")
         .then(async (storage_item) => {
-            browser.tabs
+            chrome.tabs
                 .query({ active: true, currentWindow: true })
                 .then(async (tabs) => {
                     // enabled / disabled style for popup menu items
@@ -48,65 +50,65 @@ window.onload = function() {
 }
 
 function reload_button_clicked() {
-    browser.tabs
+    chrome.tabs
         .query({ active: true, currentWindow: true })
         .then((tabs) => {
-            browser.tabs.sendMessage(tabs[0].id, {type: "reload_page"});
+            chrome.tabs.sendMessage(tabs[0].id, {type: "reload_page"});
         });
     document.querySelector("#reload_button").classList = "hidden";
 }
 
 // Toggle the modding of js functions
 async function toggle_js_mods(tabs) {
-    browser.storage.local.get("tabSettings")
+    chrome.storage.local.get("tabSettings")
         .then(async (storage_item) => {
             let settings = storage_item.tabSettings[tabs[0].origin];
             settings.js_mods = !settings.js_mods;
             settings.show_reload_button = !settings.show_reload_button;
             update_popup_ui(settings);
-            await browser.storage.local.set({tabSettings: storage_item.tabSettings});
+            await chrome.storage.local.set({tabSettings: storage_item.tabSettings});
         });
 }
 
 // Toggle dark CSS on active tab.
 function toggle_dark_css(tabs) {
-    browser.storage.local.get("tabSettings")
+    chrome.storage.local.get("tabSettings")
         .then(async (storage_item) => {
             let settings = storage_item.tabSettings[tabs[0].origin];
             settings.dark_css = !settings.dark_css;
             update_popup_ui(settings);
-            browser.tabs
+            chrome.tabs
                 .query({ active: true, currentWindow: true })
-                .then((tabs) => {browser.tabs.sendMessage(tabs[0].id, {type: "toggle_dark_css"});});
-            await browser.storage.local.set({tabSettings: storage_item.tabSettings});
+                .then((tabs) => {chrome.tabs.sendMessage(tabs[0].id, {type: "toggle_dark_css"});});
+            await chrome.storage.local.set({tabSettings: storage_item.tabSettings});
         });
 }
 
 // Toggle dark filters on active tab.
 function toggle_dark_filters(tabs) {
-    browser.storage.local.get("tabSettings")
+    chrome.storage.local.get("tabSettings")
         .then(async (storage_item) => {
             let settings = storage_item.tabSettings[tabs[0].origin];
             settings.dark_filters = !settings.dark_filters;
             update_popup_ui(settings);
-            browser.tabs
+            chrome.tabs
                 .query({ active: true, currentWindow: true })
-                .then((tabs) => {browser.tabs.sendMessage(tabs[0].id, {type: "toggle_dark_filters"});});
-            await browser.storage.local.set({tabSettings: storage_item.tabSettings});
+                .then((tabs) => {chrome.tabs.sendMessage(tabs[0].id, {type: "toggle_dark_filters"});});
+            await chrome.storage.local.set({tabSettings: storage_item.tabSettings});
         });
 }
 
 // Message context script to show user script editor
 function edit_user_script(tabs) {
-    browser.tabs
+    chrome.tabs
         .query({ active: true, currentWindow: true })
         .then((tabs) => {
             //fetch existing user script text
-            browser.storage.local.get("tabSettings")
+            chrome.storage.local.get("tabSettings")
                 .then((storage_item) => {
                     let settings = storage_item.tabSettings[trim_url(tabs[0].url)];
                     // message context script
-                    browser.tabs.sendMessage(tabs[0].id, {type: "edit_user_script", script_text: settings.user_script});
+                    chrome.tabs.sendMessage(tabs[0].id, {type: "edit_user_script", script_text: settings.user_script});
                 });
         });
 }
@@ -133,7 +135,7 @@ function popupClickHandler(e) {
         return;
     }
 
-    browser.tabs
+    chrome.tabs
         .query({ active: true, currentWindow: true })
         .then((tabs) => {
             tabs[0].origin = trim_url(tabs[0].url);

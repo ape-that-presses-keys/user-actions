@@ -7,23 +7,36 @@ console.info('Injected script runs...');
  * This whole script is only injected once these variables 
  * have been fetched. (thanks Luminous JS)
  */
-let user_script_text = (window.settings.user_script.length >= 50) ? 
-                        window.settings.user_script.substring(0, 50) + " ..." : window.settings.user_script;
-console.info(`Tab's settings:\r\n==============\r\n
-    js_mods: ${window.settings.js_mods}\r\n
-    dark_css: ${window.settings.dark_css}\r\n
-    dark_filters: ${window.settings.dark_filters}\r\n
-    show_reload_button: ${window.settings.show_reload_button}\r\n
-    user_script: ${(user_script_text === '') ? "None" : '"' + user_script_text + '"'}\r\n`);
+// let user_script_text = (window.settings.user_script.length >= 50) ? 
+//                         window.settings.user_script.substring(0, 50) + " ..." : window.settings.user_script;
+// console.info(`Tab's settings:\r\n==============\r\n
+//     js_mods: ${window.settings.js_mods}\r\n
+//     dark_css: ${window.settings.dark_css}\r\n
+//     dark_filters: ${window.settings.dark_filters}\r\n
+//     show_reload_button: ${window.settings.show_reload_button}\r\n
+//     user_script: ${(user_script_text === '') ? "None" : '"' + user_script_text + '"'}\r\n`);
 
 /**
  * Disable certain functions as selected by the user.
  * The method is simple, we override prototypes, making them do nothing.
  */
-if (window.settings.js_mods) {
-    Event.prototype.preventDefault = function(type, listener, options) {/*console.info("...");*/ /* Do Nothing */};
-    // Event.prototype.addEventListener = function(type, listener, options) {/* Do Nothing */};
-}
+// if (window.settings.js_mods) {
+//     Event.prototype.preventDefault = function(type, listener, options) {/*console.info("...");*/ /* Do Nothing */};
+//     // Event.prototype.addEventListener = function(type, listener, options) {/* Do Nothing */};
+// }
+
+// message from content script
+let wait = true;
+window.addEventListener('to-page-event', (event) => {
+    const eventData = event.detail;
+    console.log(`Injected script got:`);
+    console.log(eventData);
+});
+// message to content script
+const customEvent = new CustomEvent('to-content-event', {
+    detail: {type: "test"}
+});
+window.dispatchEvent(customEvent);
 
 function dark_mode_css() {
     let dark_style_node = document.querySelector("#dark_style");
@@ -65,11 +78,11 @@ function dark_mode_filters() {
 }
 
 // Dark mode via basic css
-if(window.settings.dark_css) {
-    dark_mode_css();
-}
+// if(window.settings.dark_css) {
+//     dark_mode_css();
+// }
 
 // Dark mode via css filters
-if(window.settings.dark_filters) {
-    dark_mode_filters();
-}
+// if(window.settings.dark_filters) {
+//     dark_mode_filters();
+// }

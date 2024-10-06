@@ -13,60 +13,27 @@ window.hasRun = true;
 
 console.info('Content script runs...');
 
-window.onload = () => {
-    /** inform background script that document has loaded (maybe not 1:1 with content/injected scripts running)
-     *  - sets the show_reload_button setting to false
-     *  - inserts css to enable text selection
-     */
-    browser.runtime.sendMessage({type: "document_onload"});
-};
-
 /**
- * Get this tab's settings from background script
- *  - clone them to the page so the injected script has access;
- *  - store a snapshot of them (todo)
+ * Messaging with injected page script
  */
-browser.runtime.sendMessage({type: "get_tab_settings"})
-    .then((settings) => {
-        // window.wrappedJSObject.settings = cloneInto(settings, window, {cloneFunctions: true,});
-        window.wrappedJSObject.settings = structuredClone(settings);
-
-        // Page script (Injected script)
-        // let page_script = document.createElement('script');
-        // page_script.id = 'user_actions_page_script';
-        // page_script.src = browser.runtime.getURL('injected_scripts/injected.js');
-        // (document.head||document.documentElement).appendChild(page_script);
-        function onExecuted(result) {
-            console.log(`We made it green`);
-        }
-        function onError(error) {
-            console.log(`Error: ${error}`);
-        }
-        const makeItGreen = 'Event.prototype.preventDefault = function(type, listener, options) {console.info("..."); /* Do Nothing */};';
-        const executing = browser.tabs.executeScript({
-            code: makeItGreen, runAt: "document_start",
+// message from page script
+window.addEventListener('to-content-event', (event) => {
+    const eventData = event.detail;
+    console.log(`Content script got (from injected script):`);
+    console.log(eventData);
+    // message to background script
+    chrome.runtime.sendMessage(eventData)
+    .then((reply) => {
+        // message from background script
+        console.log(`Content script got (from background script):`);
+        console.log(reply);
+        // message to page script
+        const customEvent = new CustomEvent('to-page-event', {
+            detail: reply
         });
-        executing.then(onExecuted, onError);
-
-        // User script
-        if(settings.user_script !== '') {
-            let user_script = document.createElement('script');
-            user_script.id = 'user_script';
-            user_script.innerHTML = settings.user_script;
-            // user_script.src = browser.runtime.getURL(`user_scripts/${window.origin.substring(8)}.js`);
-            (document.head||document.documentElement).appendChild(user_script);
-        }
+        window.dispatchEvent(customEvent);
     });
-
-/**
- * Toggle disabling JS mods (disables .preventDefault())
- * 
- * Only affects new listeners as they are added, so reloading the page 
- * is a good option (we must show a button for this).
- */
-function toggle_js_mods(message, sender, sendResponse) {
-
-}
+});
 
 function reload_page(message, sender, sendResponse) {
     window.location.reload(true);
@@ -75,7 +42,7 @@ function reload_page(message, sender, sendResponse) {
 function save_and_close_user_script_clicked () {
     document.querySelector("#edit_script_overlay").style.display = "none";
     let text = document.querySelector("#edit_script_overlay > div > textarea").value;
-    browser.runtime.sendMessage({type: "save_user_script", text: text});
+    chrome.runtime.sendMessage({type: "save_user_script", text: text});
 }
 
 // show editing overlay on page
@@ -133,12 +100,12 @@ function edit_user_script(message, sender, sendResponse) {
 /**
  * Listen for messages from the background script or popup.
  */
-browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    console.log(`Content script got (from background script):`);
+    console.log(message);
+    
     let handler_lookup = {
         "reload_page": reload_page,
-        "toggle_js_mods": toggle_js_mods,
-        "toggle_dark_css": window.wrappedJSObject.dark_mode_css,
-        "toggle_dark_filters": window.wrappedJSObject.dark_mode_filters,
         "edit_user_script": edit_user_script
     };
 
